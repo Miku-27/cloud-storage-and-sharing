@@ -1,0 +1,1 @@
+make validate jwt work , crrently broken as cant pass data to it from the depends 

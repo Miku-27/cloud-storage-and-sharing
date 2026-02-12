@@ -19,3 +19,7 @@ class ChangePasswordModel(BaseModel):
 class ForgotPassword(BaseModel):
     token:str
     new_password:str
+
+class FileCreateModel(BaseModel):
+    file_name:str
+    file_size:int

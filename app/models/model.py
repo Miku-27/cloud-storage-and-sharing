@@ -13,6 +13,7 @@ class UsersTable(Base):
     __tablename__ = "users_table"
     
     id:Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),primary_key=True,nullable=False,default=uuid.uuid4)
+    username:Mapped[str] = mapped_column(String(50),nullable=False)
     email:Mapped[str] = mapped_column(String(255),nullable=False,unique=True,index=True)
     hashed_password:Mapped[str] = mapped_column(String(100),nullable=False)
 
@@ -23,7 +24,7 @@ class FilesTable(Base):
     
     # Metadata
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users_table.id"))
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users_table.id",ondelete="CASCADE"))
     filename: Mapped[str] = mapped_column(String(255))
     
     # B2 Data
