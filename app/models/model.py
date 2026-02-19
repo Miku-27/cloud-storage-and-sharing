@@ -12,7 +12,7 @@ from app.models.types import FileStatus
 class UsersTable(Base):
     __tablename__ = "users_table"
     
-    id:Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),primary_key=True,nullable=False,default=uuid.uuid4)
+    id:Mapped[int] = mapped_column(Integer,primary_key=True,nullable=False,autoincrement=True)
     username:Mapped[str] = mapped_column(String(50),nullable=False)
     email:Mapped[str] = mapped_column(String(255),nullable=False,unique=True,index=True)
     hashed_password:Mapped[str] = mapped_column(String(100),nullable=False)
@@ -24,7 +24,7 @@ class FilesTable(Base):
     
     # Metadata
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users_table.id",ondelete="CASCADE"))
+    owner_id: Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id",ondelete="CASCADE"))
     filename: Mapped[str] = mapped_column(String(255))
     mime_type :Mapped[str] = mapped_column(String(255),nullable=False)
     # B2 Data
@@ -42,7 +42,7 @@ class FileShareTable(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     file_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("files_table.id", ondelete="CASCADE"), nullable=False)
-    shared_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users_table.id", ondelete="CASCADE"), nullable=False)
+    shared_by: Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id", ondelete="CASCADE"), nullable=False)
 
     # We use index=True because we will search by this token every time a link is clicked
     share_token: Mapped[str] = mapped_column(String(100), unique=True, index=True,nullable=False)
@@ -57,6 +57,6 @@ class FilePermissionTable(Base):
     __tablename__="file_permission_table"
 
     id:Mapped[int]=mapped_column(Integer,primary_key=True,nullable=False,autoincrement=True)
-    user_id:Mapped[uuid.UUID] = mapped_column(ForeignKey("users_table.id",ondelete="CASCADE"))
+    user_id:Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id",ondelete="CASCADE"))
     file_id:Mapped[uuid.UUID]=mapped_column(ForeignKey("files_table.id",ondelete="CASCADE"))
     granted_at:Mapped[datetime] = mapped_column(DateTime(timezone=True),server_default=func.now())

@@ -15,8 +15,10 @@ async def register_route(user_cred:RegisterModel,db:Session = Depends(get_db)):
     return make_response(response)
 
 @auth_router.patch("/user")
-async def change_password_route(new_cred:ChangePasswordModel,user_id=Depends(validate_jwt)):
-    change_password_service()
+async def change_password_route(new_cred:ChangePasswordModel,db:Session = Depends(get_db),user_id=Depends(validate_jwt)):
+    response = change_password_service(db,new_cred.model_dump(),user_id)
+    return make_response(response)
+
 
 @auth_router.post("/token")
 async def login_route(api_response:Response,user_cred:LoginModel,db=Depends(get_db)):

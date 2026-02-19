@@ -12,13 +12,12 @@ from secrets import compare_digest
 def _generate_access_token(JWT_SECRET:str,EXPIRE_TIME:int,JWT_ALGORITHMN:str,data:str):
     now = datetime.now(timezone.utc)
     payload = {
-        "sub":data,
+        "sub":str(data),
         "iat":int(now.timestamp()),
         "exp":int((now+timedelta(minutes=EXPIRE_TIME)).timestamp())
     }
 
     token = jwt.encode(payload,JWT_SECRET,JWT_ALGORITHMN)
-
     return token
 
 
@@ -27,13 +26,13 @@ def _hash_password(plain_pass):
 
 
 def _verify_password(db,email,plain_password):
-    hashed_key =  _hash_password(plain_key=plain_password)
-    record = db.query(UsersTable.hashed_password).filter(UsersTable.email == email).first()
+    hashed_key =  _hash_password(plain_pass=plain_password)
+    record = db.query(UsersTable).filter(UsersTable.email == email).first()
     if not record:
         raise ServiceException(ResultCodes.INVALID_CREDENTIALS)
 
-    hashed_key = _hash_password(plain_password)
-    is_verified = True if compare_digest(record.apikey_hash,hashed_key) else None
+    hashed_password = _hash_password(plain_password)
+    is_verified = True if compare_digest(record.hashed_password,hashed_password) else None
     if is_verified:
         return record.id
     
@@ -91,5 +90,5 @@ def change_password_service(db,user_dict,user_id):
             'data':None
         }
     except SQLAlchemyError as se:
-        raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)
+        raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR) from se
     
