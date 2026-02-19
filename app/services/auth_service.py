@@ -57,9 +57,10 @@ def register_user_service(db,user_dict):
         return {
             "success":True,
             "code":ResultCodes.USER_REGISTERED,
-            "data":{"id":new_user.id}
+            "data":{"id":str(new_user.id)}
         }
     except SQLAlchemyError as se:
+        print(se)
         db.rollback()
         raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)
     

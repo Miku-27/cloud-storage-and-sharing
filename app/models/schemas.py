@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, EmailStr, TypeAdapter, model_validator,Ht
 class RegisterModel(BaseModel):
     username:str
     email:EmailStr
-    passsword:str
+    password:str
 
 class LoginModel(BaseModel):
     email:str
@@ -23,3 +23,4 @@ class ForgotPassword(BaseModel):
 class FileCreateModel(BaseModel):
     file_name:str
     file_size:int
+    mime_type:str
