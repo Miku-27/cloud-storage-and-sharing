@@ -21,6 +21,6 @@ def generate_upload_url(key:str,content_type:str):
     client=get_s3_client()
     return client.generate_presigned_url(
             'put_object',
-            Params={'Bucket': get_config().bucket_name, 'Key':key,'contentType':content_type},
+            Params={'Bucket': get_config().bucket_name, 'Key':str(key),'ContentType':content_type},
             ExpiresIn=get_config().bucket_url_expire_seconds,
         )

@@ -28,7 +28,7 @@ class FilesTable(Base):
     filename: Mapped[str] = mapped_column(String(255))
     mime_type :Mapped[str] = mapped_column(String(255),nullable=False)
     # B2 Data
-    b2_file_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=True)
+
     status: Mapped[FileStatus] = mapped_column(default=FileStatus.PENDING,nullable=False)
     
     # Stats
