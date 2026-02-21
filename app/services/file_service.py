@@ -1,4 +1,4 @@
-from app.storage.s3_client import generate_upload_url
+from app.storage.s3_client import generate_upload_url,generate_download_url
 from app.utils.exceptions import ServiceException
 from app.utils.response import ResultCodes
 from sqlalchemy.exc import SQLAlchemyError
@@ -31,16 +31,15 @@ def upload_file_service(db,user_id,file_dict:dict):
        db.rollback()
        raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)
 
-def confirm_upload_service(file_id,db,user_id):
+def update_file(file_dict,file_id,db,user_id):
     try:
         file_id = UUID(file_id)
         file = db.query(FilesTable).filter(FilesTable.owner_id == user_id and FilesTable.id == file_id).first()
         if not file:
             raise ServiceException(ResultCodes.FILE_NOT_FOUND)
         
-        file(
-            status = FileStatus.SUCCESS
-        )
+        for key,value in file_dict.items():
+            setattr(file,key,value)
 
         db.commit()
         return {
@@ -51,3 +50,21 @@ def confirm_upload_service(file_id,db,user_id):
     except SQLAlchemyError as se:
         db.rollback()
         raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)
+
+def download_file_service(file_id,user_id,db):
+    try:
+        file_id = UUID(file_id)
+        file = db.query(FilesTable).filter(FilesTable.owner_id == user_id and FilesTable.id == file_id).first()
+        if not file:
+            raise ServiceException(ResultCodes.FILE_NOT_FOUND)
+        
+        download_url = generate_download_url(file.id,file.filename)
+
+        return {
+          "success":True,
+          "code":ResultCodes.LINK_GENERATED,
+          "data":download_url
+        }
+    
+    except SQLAlchemyError as se:
+       raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)

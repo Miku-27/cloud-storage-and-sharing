@@ -1,7 +1,5 @@
-import re
-from enum import Enum
-from datetime import datetime
-from pydantic import BaseModel, Field, EmailStr, TypeAdapter, model_validator,HttpUrl
+from pydantic import BaseModel, EmailStr
+from app.models.types import FileStatus
 
 class RegisterModel(BaseModel):
     username:str
@@ -24,3 +22,7 @@ class FileCreateModel(BaseModel):
     file_name:str
     file_size:int
     mime_type:str
+
+class FileUpdateModel(BaseModel):
+    filename:str | None 
+    status: FileStatus | None
