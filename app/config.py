@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings,SettingsConfigDict
 from functools import lru_cache
+from pathlib import Path
+import os
 
 class DeveloperSetting(BaseSettings):
     database_uri:str 
@@ -16,6 +18,9 @@ class DeveloperSetting(BaseSettings):
     bucket_name:str
     bucket_url_expire_seconds:int
 
+    base_dir:Path= Path(__file__).resolve().parent
+    template_dir:Path = os.path.join(base_dir,"templates")
+    static_dir:Path = os.path.join(base_dir,"static")
 
     model_config = SettingsConfigDict(
         env_file=".env",

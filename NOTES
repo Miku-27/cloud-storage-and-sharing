@@ -1,1 +1,8 @@
 make validate jwt work , crrently broken as cant pass data to it from the depends 
+
+for uploading i will use this aproach
+
+client ask upload link for multiple file ---> backend sends a muktiple links to upload each file
+---> starts to upload file one by one and keep updating a LIST with file_id and status so when the bactch job finish or stops midway we just send back that list to update status of file that were uploaded
+
+backend accepts list of filedata even for a sigle file, max 10 files at a time

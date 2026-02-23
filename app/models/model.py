@@ -23,7 +23,7 @@ class FilesTable(Base):
     __tablename__ = "files_table"
     
     # Metadata
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),primary_key=True, default=uuid.uuid4)
     owner_id: Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id",ondelete="CASCADE"))
     filename: Mapped[str] = mapped_column(String(255))
     mime_type :Mapped[str] = mapped_column(String(255),nullable=False)
@@ -58,5 +58,28 @@ class FilePermissionTable(Base):
 
     id:Mapped[int]=mapped_column(Integer,primary_key=True,nullable=False,autoincrement=True)
     user_id:Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id",ondelete="CASCADE"))
-    file_id:Mapped[uuid.UUID]=mapped_column(ForeignKey("files_table.id",ondelete="CASCADE"))
+    file_id:Mapped[uuid.UUID]=mapped_column( UUID(as_uuid=True),ForeignKey("files_table.id",ondelete="CASCADE"))
     granted_at:Mapped[datetime] = mapped_column(DateTime(timezone=True),server_default=func.now())
+
+class CollectionTable(Base):
+    __tablename__ ="collection_table"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),primary_key=True,nullable=False,default=uuid.uuid4)
+    owner_id: Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id",ondelete="CASCADE"))
+    collection_name: Mapped[str] = mapped_column(String(255),nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime,default=lambda: datetime.now(timezone.utc))
+
+class CollectionFileTable(Base):
+    __tablename__="collection_file_table"
+
+    id:Mapped[int]=mapped_column(Integer,primary_key=True,nullable=False,autoincrement=True)
+    collection_id: Mapped[uuid.UUID] = mapped_column( UUID(as_uuid=True),ForeignKey("collection_table.id", ondelete="CASCADE"))
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True),ForeignKey("files_table.id", ondelete="CASCADE"))
+
+class CollectionPermissionTable(Base):
+    __tablename__='collection_permission_table'
+
+    id: Mapped[int] = mapped_column(Integer,primary_key=True,nullable=False,autoincrement=True)
+    collection_id: Mapped[uuid.UUID] = mapped_column( UUID(as_uuid=True),ForeignKey("collection_table.id", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(Integer,ForeignKey("users_table.id", ondelete="CASCADE"))
+    granted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),server_default=func.now())

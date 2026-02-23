@@ -1,9 +1,10 @@
 from fastapi import FastAPI,Request,APIRouter
+from fastapi.staticfiles import StaticFiles
 from app.api.file_route import files_router
 from app.api.auth_route import auth_router
 from app.utils.exceptions import ServiceException
 from app.utils.response import make_response
-
+from app.config import get_config
 
 import traceback
 
@@ -30,7 +31,5 @@ api_router.include_router(
     prefix="/auth"
 )
 
-
-
-
+app.mount("/static",StaticFiles(directory=get_config().static_dir),name="static")
 app.include_router(api_router)

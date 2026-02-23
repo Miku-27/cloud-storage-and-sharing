@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from app.models.types import FileStatus
 
 class RegisterModel(BaseModel):
@@ -23,6 +23,14 @@ class FileCreateModel(BaseModel):
     file_size:int
     mime_type:str
 
+class FilesModel(BaseModel):
+    files:list[FileCreateModel]=Field(min_length=1,max_length=10)
+
+
 class FileUpdateModel(BaseModel):
     filename:str | None 
     status: FileStatus | None
+
+class FileFilters(BaseModel):
+    limit:int
+    page:int
