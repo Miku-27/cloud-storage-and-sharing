@@ -6,6 +6,7 @@ from app.utils.response import make_response
 from app.config import get_config
 from sqlalchemy.orm import Session
 from app.dependencies import validate_jwt
+from app.utils.response import ResultCodes
 
 auth_router = APIRouter()
 
@@ -22,7 +23,7 @@ async def change_password_route(new_cred:ChangePasswordModel,db:Session = Depend
 
 @auth_router.post("/token")
 async def login_route(api_response:Response,user_cred:LoginModel,db=Depends(get_db)):
-    token = login_user_service(db,user_cred.model_dump())
+    token,csrf_token = login_user_service(db,user_cred.model_dump())
     api_response.set_cookie(
         key="access_token",
         value=token,
@@ -32,6 +33,12 @@ async def login_route(api_response:Response,user_cred:LoginModel,db=Depends(get_
         max_age=get_config().access_token_expire_minute*60
     )
 
-    return {"success":True}
+    api_response.set_cookie(
+        key='csrf_token',
+        value=csrf_token,
+        httponly=False
+    )
+    return make_response(None,True,ResultCodes.LOGIN_SUCCESS,None)
+
 
     

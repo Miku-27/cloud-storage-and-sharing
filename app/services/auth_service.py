@@ -1,4 +1,5 @@
 import jwt
+import uuid
 from datetime import datetime,timezone,timedelta
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils.exceptions import ServiceException
@@ -11,6 +12,7 @@ from secrets import compare_digest
 
 def _generate_access_token(JWT_SECRET:str,EXPIRE_TIME:int,JWT_ALGORITHMN:str,data:str):
     now = datetime.now(timezone.utc)
+    csrf_token = str(uuid.uuid4())
     payload = {
         "sub":str(data),
         "iat":int(now.timestamp()),
@@ -18,7 +20,7 @@ def _generate_access_token(JWT_SECRET:str,EXPIRE_TIME:int,JWT_ALGORITHMN:str,dat
     }
 
     token = jwt.encode(payload,JWT_SECRET,JWT_ALGORITHMN)
-    return token
+    return token,csrf_token
 
 
 def _hash_password(plain_pass):
@@ -71,7 +73,6 @@ def login_user_service(db,user_dict):
         access_token = _generate_access_token(config.jwt_secret,config.access_token_expire_minute,config.jwt_algo,user_id)
         return access_token
     except SQLAlchemyError as se:
-
         raise ServiceException(ResultCodes.INTERNAL_SERVER_ERROR)
     
 def change_password_service(db,user_dict,user_id):

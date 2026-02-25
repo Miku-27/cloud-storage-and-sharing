@@ -88,8 +88,56 @@
                 <input type="text" placeholder="Search resources..." class="w-full bg-black/5 border-none rounded-2xl py-3 px-6 text-sm font-medium focus:bg-white outline-none transition-all">
             </div>
             <div class="flex items-center gap-4">
-                <button class="h-11 px-6 bg-black text-white rounded-xl text-xs font-bold uppercase tracking-widest">Upload</button>
-                <div class="w-11 h-11 rounded-full bg-white border border-black/5 flex items-center justify-center font-bold text-xs">JD</div>
+                <input type="file" class="hidden" x-ref="fileInput" @change="onFileSelect">
+                <button class="h-11 px-6 bg-black text-white rounded-xl text-xs font-bold uppercase tracking-widest" @click="openFilePicker">Upload</button>
+                <div class="relative" @click.away="ProfileDropdownOpen = false">
+                    <button 
+                        @click="ProfileDropdownOpen = !ProfileDropdownOpen" 
+                        class="w-11 h-11 rounded-full bg-white border border-black/5 flex items-center justify-center font-bold text-xs hover:border-black transition-all active:scale-95"
+                        :class="ProfileDropdownOpen ? 'border-black ring-4 ring-black/5' : ''"
+                    >
+                        JD
+                    </button>
+                
+                    <div 
+                        x-show="ProfileDropdownOpen" 
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-2"
+                        class="absolute right-0 mt-3 w-60 bg-white/90 backdrop-blur-xl border border-black/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 overflow-hidden"
+                        style="display: none;"
+                    >
+                        <div class="px-5 py-4 border-b border-black/5">
+                            <p class="text-[9px] mono font-bold text-black/40 uppercase tracking-[0.2em] mb-1">Authenticated User</p>
+                            <p class="text-sm font-bold truncate tracking-tight">JANE_DOE_01</p>
+                        </div>
+                
+                        <div class="p-2">
+                            <button class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-black hover:text-white transition-all group">
+                                <div class="flex items-center gap-3">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-11.314l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                                    <span class="text-[11px] mono font-bold uppercase">Appearance</span>
+                                </div>
+                                <span class="text-[9px] mono opacity-40 group-hover:opacity-100">LIGHT</span>
+                            </button>
+                
+                            <button class="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-black hover:text-white transition-all group">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+                                <span class="text-[11px] mono font-bold uppercase">System Prefs</span>
+                            </button>
+                        </div>
+                
+                        <div class="p-2 border-t border-black/5 bg-black/[0.02]">
+                            <button class="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-600 hover:text-white transition-all group">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                <span class="text-[11px] mono font-bold uppercase">Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -281,7 +329,10 @@
         </div>
     </template>
 
-    <script type="module" src="./index.js"></script>
+    <script src="{{url_for('static',path='js/base.js')}}"></script>
+
+    <script src="{{url_for('static',path='js/index.js')}}"></script>
+    
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/csp@3.x.x/dist/cdn.min.js"></script>
     
 </body>

@@ -32,5 +32,5 @@ class FileUpdateModel(BaseModel):
     status: FileStatus | None
 
 class FileFilters(BaseModel):
-    limit:int
-    page:int
+    limit:int = Field(9,lt=20)
+    page:int = 1

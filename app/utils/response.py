@@ -24,6 +24,7 @@ class ResultCodes(str, Enum):
     FILE_DELETED = "FILE_DELETED"
     FILE_RENAMED = "FILE_RENAMED"
     FILE_TOO_LARGE = "FILE_TOO_LARGE"
+    FILE_RETRIVED="FILE_RETRIVED"
     
     # Folder Operations
     FOLDER_CREATED = "FOLDER_CREATED"
@@ -135,10 +136,15 @@ MESSAGE_MAP = {
     "TOKEN_PAYLOAD_INVALID": "The token contains invalid data or claims.",
 }
 
-def make_response(service_response):
-    success = service_response.get('success')
-    code = service_response.get('code')
-    data = service_response.get('data', None)
+def make_response(service_response,c_success:bool=False,c_result_code=ResultCodes.INTERNAL_SERVER_ERROR,c_data=None):
+    if not service_response:
+        success = c_success 
+        code = c_result_code
+        data = c_data
+    else:
+        success = service_response.get('success')
+        code = service_response.get('code')
+        data = service_response.get('data', None)
 
     http_code = HTTP_CODE_MAP.get(code, status.HTTP_500_INTERNAL_SERVER_ERROR)
     msg = MESSAGE_MAP.get(code, "An unknown error occurred.")
