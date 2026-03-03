@@ -27,14 +27,14 @@ def get_user_file_service(db,user_id,filters):
 
         files = [
             {
-                "id":file_id,
-                "name":filename,
-                "size":file_size,
-                "type":mime_type,
-                "updatedAt":updated_at
+                "id":file.id ,
+                "name":file.filename,
+                "size":file.file_size,
+                "type":file.mime_type,
+                "updatedAt":file.updated_at
             }
             for (
-                file_id,filename,file_size,mime_type,updated_at)
+                file)
                 in 
                 stmt.limit(limit).offset(offset)
         ]

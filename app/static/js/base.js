@@ -8,7 +8,7 @@ async function requestBackend(url,method,dataToSend=null,contentType='applicatio
             'X-CSRF-TOKEN': csrfToken
         }
     };
-    
+
     if (dataToSend) {
         options.body = JSON.stringify(dataToSend);
     }
@@ -73,6 +73,43 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+async function uploadFileToCloud(file,urlData,onProgressCallback){
+    return new Promise((resolve,reject) => {
+        try{
+            const xhr = new XMLHttpRequest();
+            console.log("inside upload",file,urlData)
+            
+            xhr.open('PUT',urlData.upload_url);
+        
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve({ success: true, error: null });
+                } else {
+                    resolve({success: false,status: xhr.status});
+                }
+            };
+
+            xhr.onerror = () => {
+                resolve({ success: false, status: 0});
+            };
+
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    
+                    if (onProgressCallback) {
+                        onProgressCallback(percent);
+                    }
+                }
+            };
+            
+            xhr.send(file)
+
+        }catch(err){
+            resolve({success: false,status: err.message});
+        }
+    });
+} 
 
 function customToastMessage(message,success){
     window.dispatchEvent(new CustomEvent('show-toast', { 
@@ -83,49 +120,3 @@ function customToastMessage(message,success){
     }));
 }
 
-
-// NAVBAR RELATED JS CODE:
-const root = document.documentElement;
-function navbarReactive(){
-    return{
-        navbarOpen: false,
-        
-        currentThemeIndex:0,
-        themes:['Dark','Light','Snow'],
-
-        init() {
-            this.currentThemeIndex = parseInt(localStorage.getItem('libroTheme') || 0) ;
-            root.setAttribute('data-theme', this.themes[this.currentThemeIndex]);
-        },
-
-        toggleThemes(){
-            this.currentThemeIndex = (this.currentThemeIndex+1)%3;
-            root.setAttribute('data-theme', this.themes[this.currentThemeIndex]);
-            localStorage.setItem('libroTheme', this.currentThemeIndex);
-        },
-
-        async logoutUser(){
-            const backendResponse = await requestBackend('/api/auth/token','DELETE')
-            if (backendResponse != null){
-                window.location.href = '/login';
-            }
-        },
-
-        openPasswordModal: false, 
-        authPassLoading: false,
-        authPassData: {
-            oldPassword: '',
-            newPassword: ''
-        },
-        showPassword:false,
-
-        async submitAuthChangePassword() {
-            this.authPassLoading = true;
-            let [status,data] = await requestBackend('/api/auth/user', 'PATCH', this.authPassData);
-            this.openPasswordModal=false;
-            this.oldPassword = '';
-            this.newPassword = '';
-            this.authPassLoading = false;
-        },
-    }
-}

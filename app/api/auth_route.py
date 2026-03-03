@@ -22,9 +22,11 @@ async def change_password_route(new_cred:ChangePasswordModel,db:Session = Depend
 
 
 @auth_router.post("/token")
-async def login_route(api_response:Response,user_cred:LoginModel,db=Depends(get_db)):
+async def login_route(user_cred:LoginModel,db=Depends(get_db)):
     token,csrf_token = login_user_service(db,user_cred.model_dump())
-    api_response.set_cookie(
+    
+    response_obj = make_response(None,True,ResultCodes.LOGIN_SUCCESS,None)
+    response_obj.set_cookie(
         key="access_token",
         value=token,
         httponly=True,
@@ -33,12 +35,12 @@ async def login_route(api_response:Response,user_cred:LoginModel,db=Depends(get_
         max_age=get_config().access_token_expire_minute*60
     )
 
-    api_response.set_cookie(
+    response_obj.set_cookie(
         key='csrf_token',
         value=csrf_token,
         httponly=False
-    )
-    return make_response(None,True,ResultCodes.LOGIN_SUCCESS,None)
+    ) 
+    return response_obj 
 
 
     

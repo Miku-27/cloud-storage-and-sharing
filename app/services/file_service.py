@@ -8,16 +8,19 @@ from app.models.types import FileStatus
 
 def upload_file_service(db,user_id,file_dict:dict):
     try:
-    
+
         new_file = FilesTable(
             owner_id = user_id,
             filename = file_dict["file_name"],
             mime_type = file_dict["mime_type"],
-            file_size=file_dict["file_size"]
+            file_size=file_dict["file_size"],
+            status=FileStatus.PENDING
         )
+        
         db.add(new_file)
         db.flush()
         upload_url = generate_upload_url(new_file.id,new_file.mime_type)
+        print(f"url:{upload_url},\n file_key:{new_file.id}")
         db.commit()
         return {
             "success":True,

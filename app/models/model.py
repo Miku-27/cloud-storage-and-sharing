@@ -1,6 +1,7 @@
-from sqlalchemy import String,ForeignKey,DateTime,BigInteger,Integer,Boolean
+from sqlalchemy import String,ForeignKey,DateTime,BigInteger,Integer
 from app.models.database import Base
 from sqlalchemy.orm import Mapped,mapped_column
+from sqlalchemy import Enum as SQEnum
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -29,7 +30,17 @@ class FilesTable(Base):
     mime_type :Mapped[str] = mapped_column(String(255),nullable=False)
     # B2 Data
 
-    status: Mapped[FileStatus] = mapped_column(default=FileStatus.PENDING,nullable=False)
+    status: Mapped[FileStatus] = mapped_column(
+    SQEnum(
+        FileStatus,
+        name="filestatus",
+        values_callable=lambda enum: [e.value for e in enum],
+        native_enum=True,
+        validate_strings=True,
+    ),
+    default=FileStatus.PENDING,
+    nullable=False,
+)
     
     # Stats
     file_size: Mapped[int] = mapped_column(BigInteger, default=0)

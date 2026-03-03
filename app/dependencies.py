@@ -29,7 +29,7 @@ def validate_jwt(
     
 
     if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-        if not x_csrf_token != csrf_token:
+        if x_csrf_token != csrf_token:
             raise ServiceException(ResultCodes.CSRF_FAILURE)
         
     return int(user_id)

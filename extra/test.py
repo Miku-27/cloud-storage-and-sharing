@@ -1,16 +1,15 @@
 import boto3
 from botocore.config import Config
 from functools import lru_cache
-from app.config import get_config
 from urllib.parse import quote
 
 def create_s3_client():
     return boto3.client(
         service_name="s3",
-        region_name=get_config().storage_region,
-        endpoint_url=get_config().storage_endpoint_url,
-        aws_access_key_id=get_config().access_key_id2,
-        aws_secret_access_key=get_config().access_key_secret2,
+        region_name="eu-central-003",
+        endpoint_url="https://s3.eu-central-003.backblazeb2.com",
+        aws_access_key_id="00318e9082e0ac90000000004",
+        aws_secret_access_key="K003FxVy4Mc02UyZbF5O4BBYa+QkBdE",
         config=Config(
             signature_version="s3v4",
         ),
@@ -26,8 +25,8 @@ def generate_upload_url(key:str,mime_type):
     client=get_s3_client()
     return client.generate_presigned_url(
             'put_object',
-            Params={'Bucket': get_config().bucket_name, 'Key':str(key),"ContentType": mime_type,},
-            ExpiresIn=get_config().bucket_url_expire_seconds,
+            Params={'Bucket': "Major-project-bucket", 'Key':str(key)},
+            ExpiresIn="600",
         )
 
 def generate_download_url(key:str,filename:str):
@@ -36,10 +35,11 @@ def generate_download_url(key:str,filename:str):
     return client.generate_presigned_url(
         'get_object',
         Params={
-            'Bucket': get_config().bucket_name,
+            'Bucket': "Major-project-bucket",
             'Key':str(key),
             'ResponseContentDisposition':f"attachment; filename*=UTF-8''{safe_filename}"},
-        ExpiresIn=get_config().bucket_url_expire_seconds,
+        ExpiresIn=600,
     )
 
 
+print(generate_download_url("test2.html","test2.hmtl"))

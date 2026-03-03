@@ -18,6 +18,9 @@ class DeveloperSetting(BaseSettings):
     bucket_name:str
     bucket_url_expire_seconds:int
 
+    access_key_id2:str
+    access_key_secret2:str
+
     base_dir:Path= Path(__file__).resolve().parent
     template_dir:Path = os.path.join(base_dir,"templates")
     static_dir:Path = os.path.join(base_dir,"static")

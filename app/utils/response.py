@@ -1,6 +1,7 @@
 from enum import Enum
 from fastapi import status
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 
 class ResultCodes(str, Enum):
 
@@ -44,7 +45,8 @@ class ResultCodes(str, Enum):
     OPERATION_COMPLETED = "OPERATION_COMPLETED" 
     INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR" 
 
-    #JWT
+    #JWT and CSRF
+    CSRF_FAILURE = "CSRF_FAILURE"
     TOKEN_EXPIRED = "TOKEN_EXPIRED"
     TOKEN_INVALID = "TOKEN_INVALID"
     TOKEN_PAYLOAD_INVALID = "TOKEN_PAYLOAD_INVALID"
@@ -70,6 +72,7 @@ HTTP_CODE_MAP = {
     "FILE_DELETED": status.HTTP_200_OK,
     "FILE_RENAMED": status.HTTP_200_OK,
     "FILE_TOO_LARGE": status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+    "FILE_RETRIVED":status.HTTP_200_OK,
 
     # Folder Ops
     "FOLDER_CREATED": status.HTTP_201_CREATED,
@@ -90,6 +93,7 @@ HTTP_CODE_MAP = {
     "INTERNAL_SERVER_ERROR": status.HTTP_500_INTERNAL_SERVER_ERROR,
 
     #JWT
+    "CSRF_FAILURE":status.HTTP_401_UNAUTHORIZED,
     "TOKEN_EXPIRED": status.HTTP_401_UNAUTHORIZED,
     "TOKEN_INVALID": status.HTTP_401_UNAUTHORIZED,
     "TOKEN_PAYLOAD_INVALID": status.HTTP_401_UNAUTHORIZED,
@@ -115,6 +119,7 @@ MESSAGE_MAP = {
     "FILE_DELETED": "File successfully moved to trash/deleted.",
     "FILE_RENAMED": "File has been successfully renamed.",
     "FILE_TOO_LARGE": "The file exceeds the maximum allowed upload size.",
+    "FILE_RETRIVED":"Files retrieved successfully",
 
     "FOLDER_CREATED": "New folder created successfully.",
     "FOLDER_NOT_FOUND": "The specified folder could not be located.",
@@ -131,6 +136,7 @@ MESSAGE_MAP = {
     "OPERATION_COMPLETED": "The requested storage operation was completed.",
     "INTERNAL_SERVER_ERROR": "An unexpected error occurred within the storage service.",
 
+    "CSRF_FAILURE":"Invalid authentication token. Access denied",
     "TOKEN_EXPIRED": "Your session has expired. Please log in again.",
     "TOKEN_INVALID": "Invalid authentication token. Access denied.",
     "TOKEN_PAYLOAD_INVALID": "The token contains invalid data or claims.",
@@ -154,6 +160,6 @@ def make_response(service_response,c_success:bool=False,c_result_code=ResultCode
         content={
             "success": success,
             "msg": msg,
-            "data": data,
+            "data": jsonable_encoder(data),
         }
     )
