@@ -15,8 +15,7 @@ document.addEventListener('alpine:init', () => {
 
             let [status,data] = await requestBackend("/api/auth/token","POST",payload);
             if (status == true){
-                // window.location.href = '/';
-                console.log("Done")
+                window.location.href = '/';
             }
             else{
                 this.isLoading=false;

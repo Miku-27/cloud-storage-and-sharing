@@ -119,4 +119,3 @@ function customToastMessage(message,success){
         }     
     }));
 }
-

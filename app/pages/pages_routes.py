@@ -18,3 +18,7 @@ def homepage_route(request:Request):
 @pages_router.get('/register')
 def homepage_route(request:Request):
     return template.TemplateResponse("register.html",{'request':request})
+
+@pages_router.get('/file/{file_id}')
+def deatilpage_route(file_id:str,request:Request):
+    return template.TemplateResponse("file-detail.html",{'request':request})

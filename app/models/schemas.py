@@ -1,5 +1,7 @@
-from pydantic import BaseModel, EmailStr,Field
+from pydantic import BaseModel, EmailStr,Field,model_validator
+from typing import Literal
 from app.models.types import FileStatus
+from datetime import datetime
 
 class RegisterModel(BaseModel):
     username:str
@@ -34,3 +36,20 @@ class FileUpdateModel(BaseModel):
 class FileFilters(BaseModel):
     limit:int = Field(9,lt=20)
     page:int = 1
+
+    mimeType:str|None=None
+    fileName:str|None=None
+    scope: Literal['owned','sharedByMe','sharedWithMe']
+    createdBefore: datetime | None = None
+    createdAfter: datetime | None = None
+    updatedBefore: datetime | None = None
+    updatedAfter: datetime | None = None
+    sizeLt: int | None = None
+    sizeGt: int | None = None
+
+class ShareLinkModel(BaseModel):
+    password:str | None = None
+    expire_in:int | None = None
+
+class CreateAcessModel(BaseModel):
+    user_id:str

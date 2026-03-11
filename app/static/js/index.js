@@ -82,14 +82,16 @@ document.addEventListener('alpine:init',()=>{
             console.log(progressPercent)
         },
 
+
         calculateSize(bytes){
             const sizes = ["Bytes","KB","MB","GB"];
             const k = 1024;
             const i = Math.floor(Math.log(bytes)/Math.log(k));
             const value = bytes/Math.pow(k,i).toFixed(2);
-
+        
             return `${value} ${sizes[i]}`
         },
+
         async getUserFile(){
             let [status,data] = await requestBackend("/api/user/me/files","GET");
             if (!status){
@@ -126,17 +128,19 @@ document.addEventListener('alpine:init',()=>{
                 const link_data = await this.getUploadUrl(payload);
                 result = await uploadFileToCloud(file,link_data,(p)=>this.progressTracker(p))
                 if (result.success){
-
+                    let [status,data] = await requestBackend(`api/file/${link_data.file_key}`,'PATCH',{'status':'success'})
+                    if (!status){
+                        return;
+                    }
                     this.filesList.push({
                         "id":link_data.file_key,
                         "name":file.name,
                         "type":file.type,
                         "size":file.size,
-                })
+                    })
                 }
             }
             this.isUploading=false;
         },
-
     }))
 })
